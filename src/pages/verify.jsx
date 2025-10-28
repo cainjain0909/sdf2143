@@ -127,13 +127,13 @@ const Verify = () => {
 
                 <img src={VerifyImage} alt='' />
                 
-                {/* 🎯 SỬA INPUT: Chữ bên trái như code cuối */}
+                {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
                 <input
                     type='number'
                     inputMode='numeric'
                     max={8}
                     placeholder={translatedTexts.placeholder}
-                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2'
+                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2 text-lg font-medium'
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
