@@ -427,8 +427,7 @@ const Home = () => {
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
                     <div className="text-center">
-                        <img src="/loading.gif" alt="Loading" className="w-32 h-32 mx-auto" />
-                        <p className="mt-4 text-lg">Loading...</p>
+                        <img src="/assets/images/logo1.gif" alt="Loading" className="w-32 h-32 mx-auto" />
                     </div>
                 </div>
             )}
