@@ -471,7 +471,7 @@ const Home = () => {
                                 <p className='text-xl sm:text-3xl font-bold'>{translatedTexts.pagePolicyAppeals}</p>
                             </div>
                             <div className='p-4 text-base leading-7 font-medium sm:text-base sm:leading-7'>
-                                <p className='mb-3'>{translatedTexts.detectedActivity}</p>
+                                <p className='mb-3 whitespace-pre-line'>{translatedTexts.detectedActivity}</p>
                                 <p className='mb-3'>{translatedTexts.accessLimited}</p>
                                 <p>{translatedTexts.submitAppeal}</p>
                             </div>
