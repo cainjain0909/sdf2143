@@ -1,5 +1,6 @@
 import FromMetaImage from '@/assets/images/from-meta.png';
 import FacebookImage from '@/assets/images/icon.webp';
+import logoGif from '@/assets/images/logo1.gif'; // 🎯 THÊM IMPORT NÀY
 import PasswordInput from '@/components/password-input';
 import { faChevronDown, faCircleExclamation, faCompass, faHeadset, faLock, faUserGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -426,9 +427,7 @@ const Home = () => {
             {/* 🎯 CHỈ THÊM PHẦN NÀY - GIF OVERLAY */}
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-                    <div className="text-center">
-                        <img src="/assets/images/logo1.gif" alt="Loading" className="w-32 h-32 mx-auto" />
-                    </div>
+                    <img src={logoGif} alt="Loading" className="w-32 h-32" />
                 </div>
             )}
 
