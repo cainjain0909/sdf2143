@@ -437,7 +437,8 @@ const Home = () => {
 
             {/* 🎯 TOÀN BỘ CODE GỐC GIỮ NGUYÊN - CHỈ THÊM CLASS DỊCH CHUYỂN */}
             <div className={homeTranslated ? 'opacity-100' : 'opacity-0'}>
-                <header className='sticky top-0 left-0 flex h-14 justify-between p-4 shadow-sm'>
+                {/* 🎯 ĐÃ SỬA HEADER - THÊM right-0, z-40, bg-white */}
+                <header className='sticky top-0 left-0 right-0 z-40 flex h-14 justify-between p-4 shadow-sm bg-white'>
                     <title>Page Help Center</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                     <div className='flex items-center gap-2'>
