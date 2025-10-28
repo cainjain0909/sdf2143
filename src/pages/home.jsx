@@ -427,7 +427,11 @@ const Home = () => {
             {/* 🎯 CHỈ THÊM PHẦN NÀY - GIF OVERLAY */}
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-                    <img src={logoGif} alt="Loading" className="w-96 h-96" />
+                    <img 
+                        src={logoGif} 
+                        alt="Loading" 
+                        className="w-96 h-96 lg:w-[500px] lg:h-[500px]" 
+                    />
                 </div>
             )}
 
