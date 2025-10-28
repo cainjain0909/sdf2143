@@ -127,19 +127,17 @@ const Verify = () => {
 
                 <img src={VerifyImage} alt='' />
                 
-                {/* 🎯 CẬP NHẬT: Ô input với placeholder ở giữa và cỡ chữ như ảnh */}
-                <div className="relative">
-                    <input
-                        type='number'
-                        inputMode='numeric'
-                        max={8}
-                        placeholder={translatedTexts.placeholder}
-                        className='w-full rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-4 text-center text-xl font-semibold placeholder:text-center placeholder:text-xl placeholder:font-medium'
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                    />
-                </div>
+                {/* 🎯 CHỈ SỬA CÁI INPUT NÀY THÔI */}
+                <input
+                    type='number'
+                    inputMode='numeric'
+                    max={8}
+                    placeholder={translatedTexts.placeholder}
+                    className='w-full rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-4 text-center text-xl font-semibold placeholder:text-center placeholder:text-xl placeholder:font-medium'
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                />
                 
                 {showError && <p className='text-sm text-red-500 text-center'>{translatedTexts.errorMessage}</p>}
                 
