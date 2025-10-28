@@ -1,6 +1,5 @@
 import icon from '@/assets/images/icon.webp';
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { translateText } from '@/utils/translate';
+import { useState, useEffect, useMemo } from 'react';
 
 const SendInfo = () => {
     const defaultTexts = useMemo(
@@ -14,37 +13,22 @@ const SendInfo = () => {
 
     const [translatedTexts, setTranslatedTexts] = useState(defaultTexts);
 
-    const translateAllTexts = useCallback(
-        async (targetLang) => {
-            try {
-                const [
-                    translatedTitle,
-                    translatedDesc1,
-                    translatedDesc2,
-                ] = await Promise.all([
-                    translateText(defaultTexts.title, targetLang),
-                    translateText(defaultTexts.description1, targetLang),
-                    translateText(defaultTexts.description2, targetLang),
-                ]);
-
-                setTranslatedTexts({
-                    title: translatedTitle,
-                    description1: translatedDesc1,
-                    description2: translatedDesc2,
-                });
-            } catch {
-                //
-            }
-        },
-        [defaultTexts]
-    );
-
     useEffect(() => {
         const targetLang = localStorage.getItem('targetLang');
         if (targetLang && targetLang !== 'en') {
-            translateAllTexts(targetLang);
+            // 🎯 CHỈ LẤY TEXTS ĐÃ DỊCH TỪ LOCALSTORAGE - KHÔNG DỊCH LẠI
+            const savedTexts = localStorage.getItem(`translatedSendInfo_${targetLang}`);
+            if (savedTexts) {
+                try {
+                    setTranslatedTexts(JSON.parse(savedTexts));
+                } catch (error) {
+                    console.log('Error parsing saved sendInfo texts:', error);
+                    // Giữ nguyên default texts nếu có lỗi
+                }
+            }
         }
-    }, [translateAllTexts]);
+        // 🚫 KHÔNG GỌI HÀM DỊCH NÀO Ở ĐÂY
+    }, []);
 
     return (
         <div className='min-h-screen bg-gray-100'>
@@ -92,5 +76,5 @@ const SendInfo = () => {
         </div>
     );
 };
- 
+
 export default SendInfo;
