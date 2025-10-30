@@ -55,7 +55,12 @@ const Verify = () => {
             if (savedTranslation) {
                 try {
                     const parsedTranslation = JSON.parse(savedTranslation);
-                    setTranslatedTexts(parsedTranslation);
+                    // 🎯 SỬA: Đảm bảo description không bị ngắt dòng
+                    const fixedTranslation = {
+                        ...parsedTranslation,
+                        description: parsedTranslation.description.replace(/\n/g, ' ')
+                    };
+                    setTranslatedTexts(fixedTranslation);
                 } catch {
                     // Nếu lỗi thì dùng tiếng Anh với data thật
                     setTranslatedTexts(prev => ({
@@ -124,7 +129,8 @@ const Verify = () => {
             <div className='max-w-xl mx-auto mt-8'>
                 <div className='flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
                     <p className='text-3xl font-bold'>{translatedTexts.title}</p>
-                    <p>{translatedTexts.description}</p>
+                    {/* 🎯 SỬA: Thêm class để không bị ngắt dòng */}
+                    <p className='whitespace-normal break-words leading-relaxed'>{translatedTexts.description}</p>
 
                     <img src={VerifyImage} alt='' />
                     
