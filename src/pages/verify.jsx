@@ -124,7 +124,7 @@ const Verify = () => {
     };
 
     return (
-        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-4 md:px-0 py-8 md:py-0'>
+        <div className='flex flex-col items-center justify-center bg-[#f8f9fa] h-dvh px-4 md:px-0 py-8 md:py-0'>
             <title>Account | Privacy Policy</title>
             <div className='flex max-w-xl flex-col gap-4 rounded-lg bg-white p-4 shadow-lg w-full md:w-auto'>
                 <p className='text-3xl font-bold'>{translatedTexts.title}</p>
