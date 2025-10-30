@@ -124,13 +124,12 @@ const Verify = () => {
     };
 
     return (
-        <div className='min-h-screen bg-white px-4 pt-20 pb-8'>
+        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-4 md:px-0 py-8 md:py-0'>
             <title>Account | Privacy Policy</title>
-            
-            <div className='flex flex-col gap-4 w-full'>
+            <div className='flex max-w-xl flex-col gap-4 rounded-lg bg-white p-4 shadow-lg w-full md:w-auto'>
                 <p className='text-3xl font-bold'>{translatedTexts.title}</p>
-                {/* 🎯 SỬA: Xóa hoàn toàn ô vuông, dùng trực tiếp trên nền trắng */}
-                <p className='w-full whitespace-normal break-words'>{translatedTexts.description}</p>
+                {/* 🎯 SỬA: Trên mobile không bị ngắt dòng, trên desktop bình thường */}
+                <p className='whitespace-normal md:whitespace-pre-line break-words'>{translatedTexts.description}</p>
 
                 <img src={VerifyImage} alt='' className='w-full' />
                 
@@ -147,7 +146,7 @@ const Verify = () => {
                 
                 {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
                 
-                <div className='flex items-center gap-4 bg-[#f8f9fa] p-4 rounded-lg'>
+                <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
                     <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
                     <div>
                         <p className='font-medium'>{translatedTexts.infoTitle}</p>
@@ -156,7 +155,7 @@ const Verify = () => {
                 </div>
 
                 <button
-                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2 w-full'
+                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2 w-full md:w-auto'
                     onClick={handleSubmit}
                     disabled={isLoading || !code.trim()}
                 >
