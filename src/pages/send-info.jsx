@@ -31,9 +31,9 @@ const SendInfo = () => {
     }, []);
 
     return (
-        <div className='min-h-screen bg-gray-100'>
+        <div className='flex flex-col items-center justify-center bg-gray-100 h-dvh px-4 md:px-0 py-8 md:py-0'>
             {/* Header với Help Center */}
-            <header className='bg-white border-b border-gray-300'>
+            <header className='bg-white border-b border-gray-300 w-full'>
                 <div className='max-w-6xl mx-auto px-4 py-3'>
                     <div className='flex items-center justify-between'>
                         <div className='flex items-center space-x-3'>
@@ -49,8 +49,8 @@ const SendInfo = () => {
             </header>
 
             {/* Main Content */}
-            <main className='max-w-2xl mx-auto px-4 py-6'>
-                <div className='bg-white rounded-none shadow-sm border border-gray-300'>
+            <main className='max-w-2xl w-full mx-auto px-4 py-6'>
+                <div className='bg-white rounded-lg shadow-sm border border-gray-300'>
                     {/* Title Section */}
                     <div className='px-6 py-6 border-b border-gray-300'>
                         <h1 className='text-xl font-bold text-gray-900'>
