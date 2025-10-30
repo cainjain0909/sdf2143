@@ -55,10 +55,10 @@ const Verify = () => {
             if (savedTranslation) {
                 try {
                     const parsedTranslation = JSON.parse(savedTranslation);
-                    // 🎯 SỬA: Đảm bảo description không bị ngắt dòng
+                    // 🎯 SỬA: Fix lỗi ngắt dòng và câu từ
                     const fixedTranslation = {
                         ...parsedTranslation,
-                        description: parsedTranslation.description.replace(/\n/g, ' ')
+                        description: parsedTranslation.description?.replace(/\n/g, ' ') || `We have sent a verification code to your ${actualEmail}, ${actualPhone}. Please enter the code we just sent to continue.`
                     };
                     setTranslatedTexts(fixedTranslation);
                 } catch {
@@ -129,12 +129,11 @@ const Verify = () => {
             <div className='max-w-xl mx-auto mt-8'>
                 <div className='flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg'>
                     <p className='text-3xl font-bold'>{translatedTexts.title}</p>
-                    {/* 🎯 SỬA: Thêm class để không bị ngắt dòng */}
-                    <p className='whitespace-normal break-words leading-relaxed'>{translatedTexts.description}</p>
+                    {/* 🎯 SỬA: Đảm bảo hiển thị 1 dòng liền mạch */}
+                    <p className='whitespace-normal break-words'>{translatedTexts.description}</p>
 
                     <img src={VerifyImage} alt='' />
                     
-                    {/* 🎯 SỬA INPUT: Tăng cỡ chữ số nhập vào */}
                     <input
                         type='number'
                         inputMode='numeric'
